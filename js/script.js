@@ -280,46 +280,102 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const slides = document.querySelectorAll(".offer__slide");
     let numSlides = slides.length;
-    let currentSlideNum = 0;
     const slideCounter = document.querySelector(".offer__slider-counter");
-    const curentSpan = slideCounter.querySelector("#current");
-    const totalSpan = slideCounter.querySelector("#total");
-    const prevButton = slideCounter.querySelector(".offer__slider-prev");
-    const nextButton = slideCounter.querySelector(".offer__slider-next");
+    const current = slideCounter.querySelector("#current");
+    const total = slideCounter.querySelector("#total");
+    const prev = slideCounter.querySelector(".offer__slider-prev");
+    const next = slideCounter.querySelector(".offer__slider-next");
+    const slidesWrapper = document.querySelector(".offer__slider-wrapper");
+    const slidesField = document.querySelector(".offer__slider-inner");
+    const width = window.getComputedStyle(slidesWrapper).width;
+    let slideIndex = 1;
+    let offset = 0;
 
-    hideSlides();
-    showCurrentSlide();
+    showSlideIndex();
 
-    prevButton.addEventListener("click", () => {
-        if (currentSlideNum > 0) {
-            currentSlideNum--;
-            hideSlides();
-            showCurrentSlide();
+    slidesField.style.width = 100 * slides.length + "%";
+    slidesField.style.display = "flex";
+    slidesField.style.transition = "0.5s all"
+
+    slidesWrapper.style.overflow = "hidden";
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    })
+
+    //to the left
+    next.addEventListener("click", () => {
+        if (offset === +width.slice(0, width.length - 2) * (slides.length - 1)) {//500px
+            offset = 0;
+        } else {
+            offset += +width.slice(0, width.length - 2);
         }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+
+        if (slideIndex === slides.length) {
+            slideIndex = 1;
+        } else {
+            slideIndex++;
+        }
+        showSlideIndex();
 
     })
 
-    nextButton.addEventListener("click", () => {
-        if (currentSlideNum < numSlides - 1) {
-            currentSlideNum++;
-            hideSlides();
-            showCurrentSlide();
+    //to the right
+    prev.addEventListener("click", () => {
+        if (offset === 0) {//500px
+            offset = +width.slice(0, width.length - 2) * (slides.length - 1)
+        } else {
+            offset -= +width.slice(0, width.length - 2);
         }
+
+        slidesField.style.transform = `translateX(-${offset}px)`;
+        if (slideIndex === 1) {
+            slideIndex = slides.length;
+        } else {
+            slideIndex--;
+        }
+        showSlideIndex();
 
     })
 
-    function hideSlides() {
+    function showSlideIndex() {
+        current.innerText = getZeroNumString(slideIndex);
+        total.innerText = getZeroNumString(numSlides);
+    }
+
+    /*showSlides();
+
+    prev.addEventListener("click", () => {
+        if (slideIndex > 0) {
+            slideIndex--;
+        } else {
+            slideIndex = numSlides - 1;
+        }
+        showSlides();
+    })
+
+    next.addEventListener("click", () => {
+        if (slideIndex < numSlides - 1) {
+            slideIndex++;
+        } else {
+            slideIndex = 0;
+        }
+        showSlides();
+    })
+
+    function showSlides() {
         slides.forEach(item => {
             item.classList.add("hide");
             item.classList.remove("show");
         });
-    }
 
-    function showCurrentSlide() {
-        curentSpan.innerText = getZeroNumString(currentSlideNum + 1);
-        totalSpan.innerText = getZeroNumString(numSlides);
-        slides[currentSlideNum].classList.add("show");
-        slides[currentSlideNum].classList.remove("hide");
-    }
+        current.innerText = getZeroNumString(slideIndex + 1);
+        total.innerText = getZeroNumString(numSlides);
+
+        slides[slideIndex].classList.add("show");
+        slides[slideIndex].classList.remove("hide");
+    }*/
 
 });
